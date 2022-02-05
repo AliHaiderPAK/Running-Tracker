@@ -15,6 +15,7 @@ def toexcel():
     ws=wb.active
     ws.append([cal.get_date(),distance.get(),hourentry.get()+":"+minentry.get()+":"+secentry.get()])
     wb.save("data.xlsx")
+    update()
 def datesfromexcel():
     wb=load_workbook('data.xlsx')
     ws=wb.active
@@ -48,14 +49,6 @@ def timesfromexcel():
         i+=1
     wb.save("data.xlsx")
     return times
-distlist=(distsfromexcel())
-datelist=(datesfromexcel())
-timelist=(timesfromexcel())
-speedlist=[]
-for i in range(len(distlist)):
-    distlist[i]=float(distlist[i])
-for i in range(len(distlist)):    
-    speedlist.append((distlist[i]/timelist[i])*60)
 def distancegraph(x,y):
     fig = Figure(figsize = (5.3,4.1),
                  dpi = 100)
@@ -89,7 +82,67 @@ def speedgraph(x,y):
                                master = window)  
     canvas.draw()
     canvas.get_tk_widget().place(relx=0.831, rely=0.701, anchor=CENTER)
-
+def dellast():
+    wb=load_workbook('data.xlsx')
+    ws=wb.active
+    i=1
+    while (ws["A"+str(i)].value!=None):
+        i+=1
+    print(i)
+    ws["A"+str(i-1)].value=None
+    ws["B"+str(i-1)].value=None
+    ws["C"+str(i-1)].value=None
+    wb.save("data.xlsx")
+    update()
+def update():
+    try:
+        distlist=(distsfromexcel())
+        datelist=(datesfromexcel())
+        timelist=(timesfromexcel())
+        speedlist=[]
+        for i in range(len(distlist)):
+            distlist[i]=float(distlist[i])
+        for i in range(len(distlist)):    
+            speedlist.append((distlist[i]/timelist[i])*60)
+        distancegraph(datelist,distlist)
+        timegraph(datelist,timelist)
+        speedgraph(datelist,speedlist)
+        runslabel.config(text=len(datelist))
+        mindistlabel.config(text=min(distlist))
+        maxdistlabel.config(text=max(distlist))
+        avgdistlabel.config(text=round(mean(distlist),2))
+        distlabel.config(text=round(sum(distlist),2))
+        minspeedlabel.config(text=min(speedlist))
+        maxspeedlabel.config(text=round(max(speedlist),2))
+        avgspeedlabel.config(text=round(mean(speedlist),2))
+        timelabel.config(text=round(sum(timelist),2))
+        mintime.config(text=min(timelist))
+        maxtime.config(text=max(timelist))
+        avgtime.config(text=round(mean(timelist),2))    
+    except ValueError:
+        distlist=(distsfromexcel())
+        datelist=(datesfromexcel())
+        timelist=(timesfromexcel())
+        speedlist=[]
+        for i in range(len(distlist)):
+            distlist[i]=float(distlist[i])
+        for i in range(len(distlist)):    
+            speedlist.append((distlist[i]/timelist[i])*60)
+        distancegraph(datelist,distlist)
+        timegraph(datelist,timelist)
+        speedgraph(datelist,speedlist)
+        runslabel.config(text="0")
+        mindistlabel.config(text="0")
+        maxdistlabel.config(text="0")
+        avgdistlabel.config(text="0")
+        distlabel.config(text="0")
+        minspeedlabel.config(text="0")
+        maxspeedlabel.config(text="0")
+        avgspeedlabel.config(text="0")
+        timelabel.config(text="0")
+        mintime.config(text="0")
+        maxtime.config(text="0")
+        avgtime.config(text="0") 
 today = date.today()
 today=str(today)
 y=today[0:4:1]
@@ -193,6 +246,14 @@ submitbut=Button(dataentry,
                  padx=2,
                  command=toexcel)
 submitbut.place(x=190,y=257)
+dellastent=Button(dataentry,
+                  text="Delete Last Entry",
+                  font=("Arial", 15),
+                  bg="#808080",
+                  pady=2,
+                  padx=2,
+                  command=dellast)
+dellastent.place(x=290, y=257)
 stats=Label(window,
             width=152,
             height=20,
@@ -366,21 +427,7 @@ avgspeedlabel.place(x=980,y=180)
 unitlabel=Label(stats,
                 text="Time: Minutes | Distance: Kilometers | Speed: Kilometers per Hour")
 unitlabel.place(x=710,y=280)
-distancegraph(datelist,distlist)
-timegraph(datelist,timelist)
-speedgraph(datelist,speedlist)
-runslabel.config(text=len(datelist))
-mindistlabel.config(text=min(distlist))
-maxdistlabel.config(text=max(distlist))
-avgdistlabel.config(text=round(mean(distlist),2))
-distlabel.config(text=round(sum(distlist),2))
-minspeedlabel.config(text=min(speedlist))
-maxspeedlabel.config(text=round(max(speedlist),2))
-avgspeedlabel.config(text=round(mean(speedlist),2))
-timelabel.config(text=round(sum(timelist),2))
-mintime.config(text=min(timelist))
-maxtime.config(text=max(timelist))
-avgtime.config(text=round(mean(timelist),2))
+update()
 canspeed=Label(window,
                 text="Speed(kmph)",
                 font=("Arial", 15))
