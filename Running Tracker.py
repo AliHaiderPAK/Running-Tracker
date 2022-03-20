@@ -8,6 +8,8 @@ from openpyxl import Workbook, load_workbook
 import matplotlib.pyplot as plt1
 from matplotlib import style
 from statistics import mean
+from tkinter import ttk
+
 style.use('ggplot')
 cellc=1
 def toexcel():
@@ -56,11 +58,14 @@ def distancegraph(x,y):
     plt1.grid(True, color='k')
     plt1.plot(x,y,linewidth=2)
     canvas = FigureCanvasTkAgg(fig,
-                               master = window)  
+                               master = window)
     canvas.draw()
     canvas.get_tk_widget().place(relx=0.5, rely=0.5, anchor=CENTER)
     canvas.get_tk_widget().place(relx=0.1649, rely=0.701)
-  
+    candist=Label(window,
+                text="Distance(kms)",
+                font=("Arial", 15))
+    candist.place(x=200,y=425)
 def timegraph(x,y):
     fig = Figure(figsize = (5.3,4.1),
                  dpi = 100)
@@ -71,6 +76,10 @@ def timegraph(x,y):
                                master = window)  
     canvas.draw()
     canvas.get_tk_widget().place(relx=0.498, rely=0.701, anchor=CENTER)
+    cantime=Label(window,
+                text="Time(mins)",
+                font=("Arial", 15))
+    cantime.place(x=760,y=425)
 
 def speedgraph(x,y):
     fig = Figure(figsize = (5.3,4.1),
@@ -82,13 +91,16 @@ def speedgraph(x,y):
                                master = window)  
     canvas.draw()
     canvas.get_tk_widget().place(relx=0.831, rely=0.701, anchor=CENTER)
+    canspeed=Label(window,
+                text="Speed(kmph)",
+                font=("Arial", 15))
+    canspeed.place(x=1270,y=425)
 def dellast():
     wb=load_workbook('data.xlsx')
     ws=wb.active
     i=1
     while (ws["A"+str(i)].value!=None):
-        i+=1
-    print(i)
+         i+=1
     ws["A"+str(i-1)].value=None
     ws["B"+str(i-1)].value=None
     ws["C"+str(i-1)].value=None
@@ -99,25 +111,29 @@ def update():
         distlist=(distsfromexcel())
         datelist=(datesfromexcel())
         timelist=(timesfromexcel())
+        gdistlist=distlist[-7:]
+        gdatelist=datelist[-7:]
+        gtimelist=timelist[-7:]
         speedlist=[]
         for i in range(len(distlist)):
             distlist[i]=float(distlist[i])
         for i in range(len(distlist)):    
             speedlist.append((distlist[i]/timelist[i])*60)
-        distancegraph(datelist,distlist)
-        timegraph(datelist,timelist)
-        speedgraph(datelist,speedlist)
+        gspeedlist=speedlist[-7:]
+        distancegraph(gdatelist,gdistlist)
+        timegraph(gdatelist,gtimelist)
+        speedgraph(gdatelist,gspeedlist)
         runslabel.config(text=len(datelist))
         mindistlabel.config(text=min(distlist))
         maxdistlabel.config(text=max(distlist))
         avgdistlabel.config(text=round(mean(distlist),2))
         distlabel.config(text=round(sum(distlist),2))
-        minspeedlabel.config(text=min(speedlist))
+        minspeedlabel.config(text=round(min(speedlist),2))
         maxspeedlabel.config(text=round(max(speedlist),2))
         avgspeedlabel.config(text=round(mean(speedlist),2))
         timelabel.config(text=round(sum(timelist),2))
         mintime.config(text=min(timelist))
-        maxtime.config(text=max(timelist))
+        maxtime.config(text=round(max(timelist),2))
         avgtime.config(text=round(mean(timelist),2))    
     except ValueError:
         distlist=(distsfromexcel())
@@ -142,7 +158,80 @@ def update():
         timelabel.config(text="0")
         mintime.config(text="0")
         maxtime.config(text="0")
-        avgtime.config(text="0") 
+        avgtime.config(text="0")
+def fullgraph():
+    def distancegraphf(x,y):
+        fig = Figure(figsize = (19,9),
+                    dpi = 100)
+        plt1 = fig.add_subplot(111)
+        plt1.grid(True, color='k')
+        plt1.plot(x,y,linewidth=2)
+        canvas = FigureCanvasTkAgg(fig,
+                                master = frame1)
+        canvas.draw()
+        canvas.get_tk_widget().place(relx=0.5, rely=0.5, anchor=CENTER)
+        canvas.get_tk_widget().place(relx=0.5, rely=0.48)
+        candist=Label(frame1,
+                    text="Distance(kms)",
+                    font=("Arial", 15))
+        candist.place(x=700,y=20)
+    def timegraphf(x,y):
+        fig = Figure(figsize = (19,9),
+                    dpi = 100)
+        plt1 = fig.add_subplot(111)
+        plt1.grid(True, color='k')
+        plt1.plot(x,y,linewidth=2)
+        canvas = FigureCanvasTkAgg(fig,
+                                master = frame2)  
+        canvas.draw()
+        canvas.get_tk_widget().place(relx=0.5, rely=0.48, anchor=CENTER)
+        cantime=Label(frame2,
+                    text="Time(mins)",
+                    font=("Arial", 15))
+        cantime.place(x=700,y=20)
+
+    def speedgraphf(x,y):
+        fig = Figure(figsize = (19,9),
+                    dpi = 100)
+        plt1 = fig.add_subplot(111)
+        plt1.grid(True, color='k')
+        plt1.plot(x,y,linewidth=2)
+        canvas = FigureCanvasTkAgg(fig,
+                                master = frame3)  
+        canvas.draw()
+        canvas.get_tk_widget().place(relx=0.5, rely=0.48, anchor=CENTER)
+        canspeed=Label(frame3,
+                    text="Speed(kmph)",
+                    font=("Arial", 15))
+        canspeed.place(x=700,y=20)
+    fulgra=Tk()
+    w= window.winfo_screenwidth() 
+    h= window.winfo_screenheight()
+    fulgra.geometry("%dx%d" % (w, h))
+    fulgra.title("Full Graphs")
+    notebook=ttk.Notebook(fulgra)
+    frame1 = ttk.Frame(notebook, width=w, height=h)
+    frame2 = ttk.Frame(notebook, width=w, height=h)
+    frame3 = ttk.Frame(notebook, width=w, height=h)
+    distlist=(distsfromexcel())
+    datelist=(datesfromexcel())
+    timelist=(timesfromexcel())
+    speedlist=[]
+    for i in range(len(distlist)):
+        distlist[i]=float(distlist[i])
+    for i in range(len(distlist)):    
+        speedlist.append((distlist[i]/timelist[i])*60)
+    distancegraphf(datelist,distlist)
+    timegraphf(datelist,timelist)
+    speedgraphf(datelist,speedlist)
+    frame1.pack(fill='both', expand=True)
+    frame2.pack(fill='both', expand=True)
+    frame3.pack(fill='both', expand=True)
+    notebook.add(frame1, text='Distance')
+    notebook.add(frame2, text='Time')
+    notebook.add(frame3, text='Speed')
+    notebook.pack()
+    fulgra.mainloop()
 today = date.today()
 today=str(today)
 y=today[0:4:1]
@@ -278,7 +367,7 @@ runslabel=Label(stats,
                 font=("Digital-7", 20),
                 bg="black",
                 fg="#00ff22",
-                width=4,
+                width=6,
                 height=1)
 runslabel.place(x=155,y=80)
 tdistlabel=Label(stats,
@@ -291,7 +380,7 @@ distlabel=Label(stats,
                 font=("Digital-7", 20),
                 bg="black",
                 fg="#00ff22",
-                width=4,
+                width=6,
                 height=1)
 distlabel.place(x=155,y=130)
 ttimelabel=Label(stats,
@@ -304,7 +393,7 @@ timelabel=Label(stats,
                 font=("Digital-7", 20),
                 bg="black",
                 fg="#00ff22",
-                width=4,
+                width=6,
                 height=1)
 timelabel.place(x=155,y=180)
 mintimelabel=Label(stats,
@@ -424,20 +513,13 @@ avgspeedlabel=Label(stats,
                 width=4,
                 height=1)
 avgspeedlabel.place(x=980,y=180)
+fullgraph=Button(stats,
+                text="Full Graphs",
+                font=("Arial",15),
+                command=fullgraph)
+fullgraph.place(x=220,y=260)
 unitlabel=Label(stats,
                 text="Time: Minutes | Distance: Kilometers | Speed: Kilometers per Hour")
 unitlabel.place(x=710,y=280)
 update()
-canspeed=Label(window,
-                text="Speed(kmph)",
-                font=("Arial", 15))
-canspeed.place(x=1270,y=425)
-cantime=Label(window,
-                text="Time(mins)",
-                font=("Arial", 15))
-cantime.place(x=760,y=425)
-candist=Label(window,
-                text="Distance(kms)",
-                font=("Arial", 15))
-candist.place(x=200,y=425)
 window.mainloop()
