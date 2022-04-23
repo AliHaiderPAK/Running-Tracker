@@ -1,5 +1,6 @@
 from tkinter import *
 from tkinter.font import ITALIC
+from turtle import color
 from tkcalendar import Calendar
 from datetime import date
 from matplotlib.figure import Figure
@@ -56,7 +57,8 @@ def distancegraph(x,y):
                  dpi = 100)
     plt1 = fig.add_subplot(111)
     plt1.grid(True, color='k')
-    plt1.plot(x,y,linewidth=2)
+    plt1.scatter(x,y, color="blue")
+    plt1.plot(x,y,linewidth=2, color="blue")
     canvas = FigureCanvasTkAgg(fig,
                                master = window)
     canvas.draw()
@@ -71,7 +73,8 @@ def timegraph(x,y):
                  dpi = 100)
     plt1 = fig.add_subplot(111)
     plt1.grid(True, color='k')
-    plt1.plot(x,y,linewidth=2)
+    plt1.scatter(x,y, color="green")
+    plt1.plot(x,y,linewidth=2, color="green")
     canvas = FigureCanvasTkAgg(fig,
                                master = window)  
     canvas.draw()
@@ -86,6 +89,7 @@ def speedgraph(x,y):
                  dpi = 100)
     plt1 = fig.add_subplot(111)
     plt1.grid(True, color='k')
+    plt1.scatter(x,y)
     plt1.plot(x,y,linewidth=2)
     canvas = FigureCanvasTkAgg(fig,
                                master = window)  
@@ -165,7 +169,8 @@ def fullgraph():
                     dpi = 100)
         plt1 = fig.add_subplot(111)
         plt1.grid(True, color='k')
-        plt1.plot(x,y,linewidth=2)
+        plt1.scatter(x,y, color="blue")
+        plt1.plot(x,y,linewidth=2, color="blue")
         canvas = FigureCanvasTkAgg(fig,
                                 master = frame1)
         canvas.draw()
@@ -180,7 +185,8 @@ def fullgraph():
                     dpi = 100)
         plt1 = fig.add_subplot(111)
         plt1.grid(True, color='k')
-        plt1.plot(x,y,linewidth=2)
+        plt1.scatter(x,y, color="green")
+        plt1.plot(x,y,linewidth=2, color="green")
         canvas = FigureCanvasTkAgg(fig,
                                 master = frame2)  
         canvas.draw()
@@ -195,6 +201,7 @@ def fullgraph():
                     dpi = 100)
         plt1 = fig.add_subplot(111)
         plt1.grid(True, color='k')
+        plt1.scatter(x,y)
         plt1.plot(x,y,linewidth=2)
         canvas = FigureCanvasTkAgg(fig,
                                 master = frame3)  
